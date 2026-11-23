@@ -1,0 +1,1 @@
+{"name":"canvas-studio","version":"0.2.0","private":true,"description":"Local template editor and MP4 exporter for the Canvas video style","scripts":{"start":"node server.js"},"dependencies":{"puppeteer-core":"^23.11.1"},"optionalDependencies":{"ffmpeg-static":"^5.2.0"}}
