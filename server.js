@@ -27,12 +27,12 @@ async function render(id,data){
   if(chk.error||chk.status!==0)throw new Error('ffmpeg is not working ('+ff+'). Run "npm install" again, or install ffmpeg and set FFMPEG_PATH.');
   const g=data.global||{},fps=+g.fps||30,dur=Math.min(60,+g.dur||4.5),scale=g.res==='720p'?1:1.5;
   const [W,H]=data.format==='16:9'?[1280,720]:[720,1280],total=Math.max(1,Math.round(dur*fps));
-  const out=path.join(EXP,`${safe(data.canvas_template)}-${data.format.replace(':','x')}-${id}.mp4`);
+  const out=path.join(EXP,`${safe(data.template||data.canvas_template)}-${data.format.replace(':','x')}-${id}.mp4`);
   let p=null;
   const browser=await puppeteer.launch({executablePath:exe,headless:true,args:['--no-sandbox']});
   try{
     const page=await browser.newPage();await page.setViewport({width:W,height:H,deviceScaleFactor:scale});
-    await page.goto(`http://127.0.0.1:${PORT}/?render=1`,{waitUntil:'load'});
+    await page.goto(`http://127.0.0.1:${PORT}/${safe(data.skill||'canvas')}/?render=1`,{waitUntil:'load'});
     await page.evaluate(d=>window.__load(d),data);
     await Promise.race([page.evaluate(()=>document.fonts.ready),new Promise(r=>setTimeout(r,6000))]);
     p=spawn(ff,['-y','-loglevel','error','-f','image2pipe','-framerate',String(fps),'-c:v','mjpeg','-i','-','-c:v','libx264','-pix_fmt','yuv420p','-crf','16','-preset','medium','-movflags','+faststart',out]);
@@ -70,7 +70,10 @@ http.createServer(async(req,res)=>{
     if(url.pathname==='/api/video'){const j=jobs[url.searchParams.get('id')];if(!j||!j.file)return send(res,404,{error:'not ready'});
       res.writeHead(200,{'Content-Type':'video/mp4','Content-Disposition':`attachment; filename="${path.basename(j.file)}"`});return fs.createReadStream(j.file).pipe(res)}
   }catch(e){return send(res,400,{ok:false,error:String(e.message||e)})}
-  const p=path.normalize(path.join(PUB,url.pathname==='/'?'index.html':url.pathname));
+  let rel=url.pathname;
+  if(!path.extname(rel)&&!rel.endsWith('/')&&fs.existsSync(path.join(PUB,rel,'index.html'))){res.writeHead(301,{Location:rel+'/'});return res.end()}
+  if(rel.endsWith('/'))rel+='index.html';
+  const p=path.normalize(path.join(PUB,rel));
   if(!p.startsWith(PUB))return send(res,403,'Forbidden','text/plain');
   fs.readFile(p,(e,d)=>e?send(res,404,'Not found','text/plain'):send(res,200,d,MIME[path.extname(p)]||'application/octet-stream'));
 }).listen(PORT,'127.0.0.1',()=>console.log(`\nCanvas Studio running at http://localhost:${PORT}\n(Ctrl+C to stop)\n`));

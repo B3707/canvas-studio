@@ -1,6 +1,12 @@
-# Canvas Studio
+# Video Skills Studio
 
-Edit Canvas-style motion templates in your browser, preview them live, save them, and **export them as MP4 video**.
+One website, one studio per skill. Each studio has its own look and its own templates. Edit a template in the browser, preview it live, save it, and **export it as MP4 video**.
+
+| Page | Skill | Templates |
+|---|---|---|
+| `/` | Hub that links the skills | |
+| `/canvas/` | Canvas (16:9 or 9:16 explainer graphics) | 13 |
+| `/skylight/` | Skylight (9:16 podcast-clip graphics) | 8 |
 Runs two ways: **locally** (`npm start`, Chrome renders the video) or **hosted on Vercel** (the visitor's own browser renders the video).
 
 ## Setup (once)
@@ -53,3 +59,17 @@ The `public/` folder is the whole site. No build step, no server code runs on Ve
 | Save templates | files in `templates/` | in your browser (+ Download/Import JSON) |
 | MP4 export | Chrome + ffmpeg on your computer | in the browser (desktop Chrome / Edge) |
 Browser export needs a browser with WebCodecs (desktop Chrome or Edge). Safari and Firefox may not work. Rendering happens on the visitor's computer, so it costs you nothing to host.
+
+## How it is organised
+- `public/shared/`   the engine every skill uses: preview, editor, MP4 export, saving (`studio.js`, `studio.css`, `lib.js`)
+- `public/skills/`   one file per skill: its templates, fonts and look (`canvas.js`, `skylight.js`)
+- `public/<skill>/index.html`   a thin page for that skill
+- `public/fonts/`    self-hosted fonts (OFL licences included)
+
+## Add another skill
+1. Copy `public/skills/skylight.js` to `public/skills/<name>.js` and replace the templates (keep the `SKILL` object at the bottom).
+2. Copy `public/skylight/index.html` to `public/<name>/index.html` and change the title and the `<script src="/skills/...">` line.
+3. Add an entry to `SKILLS_INDEX` at the top of `public/shared/lib.js`. The hub and the nav pick it up.
+
+## What a skill's templates cover (and don't)
+Templates cover the visual abilities that can run in a browser. Skylight's podcast download, transcript, clip picking and face-tracked reframing need the local pipeline (Claude Code), so they are not templates here. The speaker in Skylight's `a-roll` scene is a placeholder silhouette.

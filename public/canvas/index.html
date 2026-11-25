@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Canvas Studio</title>
+<link rel="stylesheet" href="/shared/studio.css">
+</head>
+<body>
+<div class="app">
+<aside>
+  <nav class="nav" id="nav"></nav>
+  <h1 id="brand"></h1>
+  <p class="sub" id="tag"></p>
+  <div class="tpls" id="tpls"></div>
+  <div id="fields"></div>
+  <label for="accent">Accent colour</label>
+  <input type="color" id="accent" value="#2148e0">
+</aside>
+<main>
+  <div class="bar">
+    <div class="seg" role="group" aria-label="Format">
+      <button id="f169" aria-pressed="true">Long 16:9</button>
+      <button id="f916" aria-pressed="false">Short 9:16</button>
+    </div>
+    <button class="btn alt" id="play">Pause</button>
+    <button class="btn alt" id="theme">Theme</button>
+    <button class="btn" id="exp">Export MP4</button><span class="msg" id="emsg"></span>
+  </div>
+  <div class="stagewrap" id="wrap"><div class="frame" id="frame"><div id="stage"></div></div></div>
+  <div class="tl"><input type="range" id="scrub" min="0" max="1000" value="0" aria-label="Timeline"><output id="time">0.00 / 4.50 s</output></div>
+  <details open>
+    <summary>Template JSON</summary>
+    <p class="msg">Save this in your repo, or paste it into Claude Code as a beat for your video build.</p>
+    <textarea id="json" readonly aria-label="Template JSON"></textarea>
+    <div class="bar" style="margin-top:8px"><button class="btn alt" id="copy">Copy JSON</button><span class="msg" id="cmsg"></span></div>
+  </details>
+  <section class="saved">
+    <div class="bar"><input type="text" id="sname" placeholder="Template name" aria-label="Template name" style="max-width:240px"><button class="btn" id="save">Save template</button><span class="msg" id="smsg"></span></div>
+    <div class="bar" style="margin-top:10px"><button class="btn alt" id="dl">Download JSON file</button><label class="btn alt" for="imp" style="margin:0;cursor:pointer">Import JSON file</label><input type="file" id="imp" accept=".json,application/json" hidden></div>
+    <div id="slist" class="bar" style="margin-top:10px"></div>
+  </section>
+</main>
+</div>
+<script src="/vendor/mp4-muxer.js"></script>
+<script src="/shared/lib.js"></script>
+<script src="/skills/canvas.js"></script>
+<script src="/shared/studio.js"></script>
+</body>
+</html>
