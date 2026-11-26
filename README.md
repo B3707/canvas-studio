@@ -73,3 +73,12 @@ Browser export needs a browser with WebCodecs (desktop Chrome or Edge). Safari a
 
 ## What a skill's templates cover (and don't)
 Templates cover the visual abilities that can run in a browser. Skylight's podcast download, transcript, clip picking and face-tracked reframing need the local pipeline (Claude Code), so they are not templates here. The speaker in Skylight's `a-roll` scene is a placeholder silhouette.
+
+## Update GitHub
+From the repo folder, after changing any file:
+```
+git add -A
+git commit -m "Describe what you changed"
+git push
+```
+Vercel redeploys on every push to `main` (about a minute). No terminal? On github.com open the repo, **Add file → Upload files**, drag the changed files in, and commit to `main`.

@@ -14,3 +14,4 @@ const pop=(on,t)=>{const e=ease((t-on)/0.35);return `opacity:${e.toFixed(3)};tra
 const gf=(v,o=['paper','dark'])=>({k:'ground',l:'Ground',t:'sel',o,v});
 const ICH='Icons: '+Object.keys(IC).join(', ');
 const GRAIN="data:image/svg+xml,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2"/></filter><rect width="100%" height="100%" filter="url(#n)"/></svg>');
+function startClock(el){const f=()=>{const d=new Date();let h=d.getHours();const ap=h>=12?'PM':'AM',z=n=>String(n).padStart(2,'0');h=h%12||12;el.textContent=`${z(h)} : ${z(d.getMinutes())} : ${z(d.getSeconds())} ${ap}`};f();setInterval(f,1000)}

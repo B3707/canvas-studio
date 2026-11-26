@@ -4,8 +4,11 @@ const $=id=>document.getElementById(id);
 const dims=()=>S.fmt=='16:9'?[1280,720]:[720,1280];
 function resetParams(){S.params={};T[S.tpl].fields.forEach(f=>S.params[f.k]=f.v)}
 
-function buildTpls(){
- $('tpls').innerHTML=Object.entries(T).map(([k,v])=>`<button class="tpl" data-k="${k}" aria-pressed="${k==S.tpl}"><b>${v.name}</b><span>${v.desc}</span></button>`).join('');
+function thumb(k,W,H){const p={};T[k].fields.forEach(f=>p[f.k]=f.v);let r;try{r=T[k].draw(p,3.6,S.accent,W,H)}catch(x){return ''}
+ return `<div class="th" style="aspect-ratio:${W}/${H}"><div class="thin" style="width:${W}px;height:${H}px;background:${r.bg};color:${r.color};font-family:${FONTS[G.font]}">${r.html}</div></div>`}
+function buildTpls(){if(document.body.classList.contains('render'))return;const [W,H]=dims();
+ $('tpls').innerHTML=Object.entries(T).map(([k,v])=>`<button class="tpl" data-k="${k}" aria-pressed="${k==S.tpl}">${thumb(k,W,H)}<b>${v.name}</b><span>${v.desc}</span></button>`).join('');
+ $('tpls').querySelectorAll('.th').forEach(x=>{if(x.firstChild)x.firstChild.style.transform=`scale(${x.clientWidth/W})`});
  $('tpls').querySelectorAll('.tpl').forEach(b=>b.onclick=()=>{S.tpl=b.dataset.k;S.t=0;resetParams();buildTpls();buildFields();draw()});
 }
 function fld(f,o,id){const v=o[f.k];
@@ -18,11 +21,11 @@ function section(fs,o,pre){return fs.map(f=>{const id=pre+f.k;return f.t=='chk'?
 function wire(f,o,id){const el=$(id);el.oninput=el.onchange=e=>{const t=e.target;o[f.k]=f.t=='chk'?t.checked:f.t=='num'?+t.value:t.value;
  if(f.t=='num')$(id+'o').textContent=t.value;if(f.k=='dur'){D=G.dur;S.t=Math.min(S.t,D)}draw()}}
 function buildFields(){const tf=T[S.tpl].fields;
- $('fields').innerHTML='<h2>Template</h2>'+section(tf,S.params,'f_')+'<h2>Style &amp; export</h2>'+section(GF,G,'g_');
+ $('fields').innerHTML='<h2>(template)</h2>'+section(tf,S.params,'f_')+'<h2>(style &amp; export)</h2>'+section(GF,G,'g_');
  tf.forEach(f=>wire(f,S.params,'f_'+f.k));GF.forEach(f=>wire(f,G,'g_'+f.k))}
 function fit(){
  if(document.body.classList.contains('render')){const[W,H]=dims();Object.assign($('stage').style,{position:'fixed',left:'0',top:'0',zIndex:'99',width:W+'px',height:H+'px',transform:'none'});return}
- const [W,H]=dims(),wrapW=$('wrap').clientWidth-32,maxH=Math.max(320,window.innerHeight*0.62);
+ const [W,H]=dims(),wrapW=$('wrap').clientWidth-56,maxH=Math.max(240,$('wrap').clientHeight-56);
  const sc=Math.min(wrapW/W,maxH/H,1);
  $('frame').style.width=W*sc+'px';$('frame').style.height=H*sc+'px';
  $('stage').style.width=W+'px';$('stage').style.height=H+'px';$('stage').style.transform=`scale(${sc})`;
@@ -40,11 +43,13 @@ let last=performance.now();
 function tick(n){const dt=(n-last)/1000;last=n;
  if(S.play){S.t+=dt;if(S.t>D+0.8)S.t=0;if(S.t<=D)draw();else{S.t=Math.min(S.t,D)}}
  requestAnimationFrame(tick)}
-function setFmt(f){S.fmt=f;$('f169').setAttribute('aria-pressed',f=='16:9');$('f916').setAttribute('aria-pressed',f!='16:9');fit();draw()}
+function setFmt(f){S.fmt=f;$('f169').setAttribute('aria-pressed',f=='16:9');$('f916').setAttribute('aria-pressed',f!='16:9');fit();draw();buildTpls()}
 $('f169').onclick=()=>setFmt('16:9');$('f916').onclick=()=>setFmt('9:16');
-$('play').onclick=()=>{S.play=!S.play;$('play').textContent=S.play?'Pause':'Play'};
-$('scrub').oninput=e=>{S.play=false;$('play').textContent='Play';S.t=e.target.value/1000*D;draw()};
-$('accent').oninput=e=>{S.accent=e.target.value;draw()};
+const PL='<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M4 2.5v11l9-5.5z"/></svg>',PA='<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><rect x="3" y="2.5" width="3.5" height="11" rx="1"/><rect x="9.5" y="2.5" width="3.5" height="11" rx="1"/></svg>';
+function setPlay(){$('play').innerHTML=S.play?PA:PL;$('play').setAttribute('aria-label',S.play?'Pause':'Play')}
+$('play').onclick=()=>{S.play=!S.play;setPlay()};
+$('scrub').oninput=e=>{S.play=false;setPlay();S.t=e.target.value/1000*D;draw()};
+$('accent').oninput=e=>{S.accent=e.target.value;draw();clearTimeout(window.__tt);window.__tt=setTimeout(buildTpls,200)};
 $('theme').onclick=()=>{const r=document.documentElement,d=getComputedStyle(r).colorScheme=='dark';r.dataset.theme=d?'light':'dark'};
 $('copy').onclick=async()=>{try{await navigator.clipboard.writeText($('json').value);$('cmsg').textContent='Copied.'}catch(e){$('json').select();$('cmsg').textContent='Press Ctrl/Cmd+C to copy.'}};
 window.addEventListener('resize',fit);
@@ -103,7 +108,7 @@ async function exportInBrowser(m){
  }finally{S.play=wasPlay;S.t=t0;draw()}}
 fetch('/api/templates').then(r=>{SERVER=r.ok&&(r.headers.get('content-type')||'').includes('json')}).catch(()=>{}).finally(loadList);
 if(location.search.includes('render=1'))document.body.classList.add('render');
-document.title=SKILL.name+' Studio';$('brand').textContent=SKILL.name+' Studio';$('tag').textContent=SKILL.tagline;
+document.title=SKILL.name+' Studio';$('brand').innerHTML=SKILL.name+' <em>studio</em>';if($('clk'))startClock($('clk'));setPlay();new ResizeObserver(()=>fit()).observe($('wrap'));$('tag').textContent=SKILL.tagline;
 $('nav').innerHTML='<a href="/">Home</a>'+SKILLS_INDEX.map(k=>`<a href="${k.href}"${k.id==SKILL.id?' aria-current="page"':''}>${k.name}</a>`).join('');
 $('accent').value=S.accent;
 resetParams();buildTpls();buildFields();setFmt(S.fmt);requestAnimationFrame(tick);
