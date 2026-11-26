@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Video Skills Studio</title>
+<meta name="description" content="Edit video graphics as templates and export them as MP4. Canvas and Skylight, each with its own set of designs.">
+<style>
+/* Landing: warm ramp, one accent, mono timecode. Part of the unslop pass (unslop by @heydamir, CC BY 4.0). */
+@font-face{font-family:'DM Sans';font-weight:100 1000;src:url(/fonts/dmsans-var.woff2) format('woff2');font-display:swap}
+@font-face{font-family:'Instrument Serif';font-weight:400;font-style:normal;src:url(/fonts/instrumentserif-400.woff2) format('woff2');font-display:swap}
+@font-face{font-family:'JetBrains Mono';font-weight:400;src:url(/fonts/jetbrainsmono-400.woff2) format('woff2');font-display:swap}
+:root{--bg:#f7f4ee;--card:#fdfbf7;--raise:#efe9df;--ink:#1f1b16;--ink2:#5e554a;--mute:#7b7266;--line:rgba(31,27,22,.09);--accent:#c8341a;--on:#fff;--e:cubic-bezier(.22,1,.36,1);--mono:'JetBrains Mono',ui-monospace,Menlo,monospace;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root{--bg:#161513;--card:#1c1a18;--raise:#262421;--ink:#efe9de;--ink2:#aaa398;--mute:#8a847a;--line:rgba(239,233,222,.09);--accent:#f26a4b;--on:#161513;color-scheme:dark}}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/22px 'DM Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit}a:focus-visible,.btn:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+.wrap{max-width:1200px;margin:0 auto;padding:0 32px}
+.top{display:flex;justify-content:space-between;align-items:center;height:64px}
+.logo{font-size:16px;line-height:1;font-weight:500;text-decoration:none}
+.links{display:flex;gap:24px}.links a{font-size:14px;font-weight:500;color:var(--ink2);text-decoration:none;transition:color 150ms var(--e)}.links a:hover{color:var(--ink)}
+.hero{display:grid;grid-template-columns:minmax(0,520px) minmax(0,1fr);gap:64px;align-items:center;padding:96px 0 96px max(32px,calc((100vw - 1200px)/2 + 32px))}
+h1{font:400 clamp(40px,5.2vw,68px)/1.04 'Instrument Serif',Georgia,serif;letter-spacing:-.03em;margin:0}
+.sub{font-size:18px;line-height:28px;color:var(--ink2);margin:24px 0 0;max-width:36rem}
+.act{display:flex;gap:12px;margin-top:32px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;height:44px;padding:0 20px;border-radius:10px;font-size:15px;font-weight:500;text-decoration:none;background:var(--accent);color:var(--on);transition:opacity 150ms var(--e),transform 150ms var(--e),box-shadow 150ms var(--e)}
+.btn:hover{opacity:.9}.btn:active{transform:scale(.98)}.btn.alt{background:var(--card);color:var(--ink);box-shadow:0 0 0 1px var(--line)}.btn.alt:hover{opacity:1;box-shadow:0 0 0 1px rgba(127,118,102,.4)}
+.strip{display:flex;gap:16px;align-items:flex-start;overflow-x:auto;padding:4px 32px 8px 0;scrollbar-width:none}.strip::-webkit-scrollbar{display:none}
+.strip figure{margin:0;flex:none}.strip img{display:block;height:340px;width:auto;border-radius:6px;box-shadow:0 0 0 1px var(--line)}
+.strip figcaption,.meta{font:400 12px/16px var(--mono);color:var(--mute);font-variant-numeric:tabular-nums}
+.strip figcaption{display:flex;gap:12px;margin-top:12px}.strip figcaption b{font-weight:400;color:var(--ink2)}
+.skill:first-child{border-top:1px solid var(--line)}
+.skill{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:64px;align-items:center;padding:80px 0;border-bottom:1px solid var(--line)}
+.skill h2{font:400 clamp(36px,4.4vw,52px)/1.08 'Instrument Serif',Georgia,serif;letter-spacing:-.02em;margin:12px 0 16px}
+.skill p{margin:0;color:var(--ink2);max-width:30rem;font-size:16px;line-height:24px}
+.names{margin-top:20px;font-size:14px;line-height:22px;color:var(--mute);max-width:32rem}
+.open{display:inline-block;margin-top:24px;font-size:15px;font-weight:500;color:var(--accent);text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px}
+.shot{justify-self:start}.shot img{display:block;border-radius:8px;box-shadow:0 0 0 1px var(--line);max-width:100%;height:auto}
+.foot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:32px 32px 48px;color:var(--mute);font-size:13px}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.in>*{animation:rise 400ms var(--e) both}.in>*:nth-child(2){animation-delay:50ms}.in>*:nth-child(3){animation-delay:100ms}
+@media (max-width:900px){.hero{grid-template-columns:1fr;gap:40px;min-height:0;padding:48px 32px 56px;display:block}.strip{margin:48px -32px 0;padding:4px 32px 8px}.strip img{height:260px}.skill{grid-template-columns:1fr;gap:32px;padding:56px 0}.shot{justify-self:start}.shot img{max-width:100%}.wrap{padding:0 24px}.hero{padding:40px 24px}.foot{padding:24px 24px 40px}.strip{margin:40px -24px 0;padding:4px 24px 8px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap top"><a class="logo" href="/">Video Skills Studio</a><nav class="links" aria-label="Skills"><a href="/canvas/">Canvas</a><a href="/skylight/">Skylight</a></nav></div>
+<section class="hero">
+  <div class="in">
+    <h1>Edit video graphics as templates. Export them as MP4.</h1>
+    <p class="sub">Canvas and Skylight each come with their own captions, charts and callouts. Change the words and colours, watch the motion, then render the video in your browser.</p>
+    <div class="act"><a class="btn" href="/canvas/">Open Canvas</a><a class="btn alt" href="/skylight/">Open Skylight</a></div>
+  </div>
+  <div class="strip" aria-label="Frames from the templates">
+    <figure><img src="/img/sky-caption.webp" width="191" height="340" alt="Skylight two-tier caption over a speaker"><figcaption><b>00:00</b><span>Skylight caption</span></figcaption></figure>
+    <figure><img src="/img/canvas-caption.webp" width="604" height="340" alt="Canvas caption with the word four in large blue type"><figcaption><b>00:04</b><span>Canvas caption</span></figcaption></figure>
+    <figure><img src="/img/sky-world.webp" width="191" height="340" alt="Skylight world template, a clock in a blue sky"><figcaption><b>00:08</b><span>Skylight world</span></figcaption></figure>
+    <figure><img src="/img/canvas-donut.webp" width="604" height="340" alt="Canvas donut chart template"><figcaption><b>00:12</b><span>Canvas donut</span></figcaption></figure>
+    <figure><img src="/img/sky-bars.webp" width="191" height="340" alt="Skylight bar chart template"><figcaption><b>00:16</b><span>Skylight bars</span></figcaption></figure>
+    <figure><img src="/img/canvas-graph.webp" width="604" height="340" alt="Canvas climbing graph template"><figcaption><b>00:20</b><span>Canvas graph</span></figcaption></figure>
+  </div>
+</section>
+<main class="wrap skills" id="skills"></main>
+<div class="wrap foot"><span>Everything runs in your browser. Nothing is uploaded.</span><span>Export works best in desktop Chrome or Edge.</span></div>
+<script src="/shared/lib.js"></script>
+<script>
+const IMG={canvas:['/img/canvas-iconflow.webp',560,315,'Canvas icon flow template showing four steps'],skylight:['/img/sky-caption.webp',236,420,'Skylight caption template over a speaker']};
+document.getElementById('skills').innerHTML=SKILLS_INDEX.map(k=>{const i=IMG[k.id];return `<section class="skill"><div><span class="meta">${k.abilities.length} templates</span><h2>${k.name}</h2><p>${k.blurb}</p><div class="names">${k.abilities.join(', ')}</div><a class="open" href="${k.href}">Open ${k.name} studio</a></div><div class="shot"><img src="${i[0]}" width="${i[1]}" height="${i[2]}" alt="${i[3]}" loading="lazy"></div></section>`}).join('');
+</script>
+</body>
+</html>

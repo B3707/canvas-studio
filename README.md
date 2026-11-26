@@ -82,3 +82,6 @@ git commit -m "Describe what you changed"
 git push
 ```
 Vercel redeploys on every push to `main` (about a minute). No terminal? On github.com open the repo, **Add file → Upload files**, drag the changed files in, and commit to `main`.
+
+## Design credit
+The interface was redesigned with the unslop method by Damir Sokolovsky ([@heydamir](https://x.com/heydamir), CC BY 4.0). The hub's film strip is made of real frames rendered from the templates in `public/img/` (re-render them if you change a template).
